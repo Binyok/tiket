@@ -8,6 +8,15 @@ import HotelsPage from './pages/HotelsPage';
 import HotelDetailPage from './pages/HotelDetailPage';
 import TrainsPage from './pages/TrainsPage';
 import CheckoutPage from './pages/CheckoutPage';
+import FlightCheckoutPage from './pages/FlightCheckoutPage';
+import HotelCheckoutPage from './pages/HotelCheckoutPage';
+import TrainCheckoutPage from './pages/TrainCheckoutPage';
+import BusPage from './pages/BusPage';
+import CarRentalPage from './pages/CarRentalPage';
+import EventsPage from './pages/EventsPage';
+import RewardsPage from './pages/RewardsPage';
+import HelpPage from './pages/HelpPage';
+import AboutPage from './pages/AboutPage';
 
 function App() {
   return (
@@ -22,13 +31,16 @@ function App() {
             <Route path="/hotels" element={<HotelsPage />} />
             <Route path="/hotel-detail" element={<HotelDetailPage />} />
             <Route path="/trains" element={<TrainsPage />} />
+            <Route path="/checkout/flight" element={<FlightCheckoutPage />} />
+            <Route path="/checkout/hotel" element={<HotelCheckoutPage />} />
+            <Route path="/checkout/train" element={<TrainCheckoutPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/bus" element={<div className="container mx-auto px-4 py-16 min-h-screen"><h1 className="text-3xl font-bold text-gray-900">Halaman Bus & Travel</h1><p className="text-gray-600 mt-4">Fitur ini sedang dalam pengembangan</p></div>} />
-            <Route path="/car-rental" element={<div className="container mx-auto px-4 py-16 min-h-screen"><h1 className="text-3xl font-bold text-gray-900">Halaman Sewa Mobil</h1><p className="text-gray-600 mt-4">Fitur ini sedang dalam pengembangan</p></div>} />
-            <Route path="/events" element={<div className="container mx-auto px-4 py-16 min-h-screen"><h1 className="text-3xl font-bold text-gray-900">Halaman Event</h1><p className="text-gray-600 mt-4">Fitur ini sedang dalam pengembangan</p></div>} />
-            <Route path="/rewards" element={<div className="container mx-auto px-4 py-16 min-h-screen"><h1 className="text-3xl font-bold text-gray-900">Rewards Program</h1><p className="text-gray-600 mt-4">Kumpulkan poin setiap transaksi!</p></div>} />
-            <Route path="/help" element={<div className="container mx-auto px-4 py-16 min-h-screen"><h1 className="text-3xl font-bold text-gray-900">Pusat Bantuan</h1><p className="text-gray-600 mt-4">Hubungi kami: +62 21 5000 1234</p></div>} />
-            <Route path="/about" element={<div className="container mx-auto px-4 py-16 min-h-screen"><h1 className="text-3xl font-bold text-gray-900">Tentang TravelHub</h1><p className="text-gray-600 mt-4">Platform booking travel terpercaya #1 di Indonesia</p></div>} />
+            <Route path="/bus" element={<BusPage />} />
+            <Route path="/car-rental" element={<CarRentalPage />} />
+            <Route path="/events" element={<EventsPage />} />
+            <Route path="/rewards" element={<RewardsPage />} />
+            <Route path="/help" element={<HelpPage />} />
+            <Route path="/about" element={<AboutPage />} />
           </Routes>
         </main>
         <Footer />

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Plane, 
@@ -27,6 +27,7 @@ const FlightsPage = () => {
   const [selectedAirlines, setSelectedAirlines] = useState([]);
   const [selectedTimeSlots, setSelectedTimeSlots] = useState([]);
   const [sortBy, setSortBy] = useState('price');
+  const [visibleCount, setVisibleCount] = useState(3);
 
   const cities = [
     { name: 'Jakarta', code: 'CGK' },
@@ -38,26 +39,6 @@ const FlightsPage = () => {
     { name: 'Bandung', code: 'BDO' },
     { name: 'Semarang', code: 'SRG' },
   ];
-
-  const handleSearch = () => {
-    console.log('Searching with:', searchData);
-  };
-
-  const toggleAirline = (airline) => {
-    setSelectedAirlines(prev => 
-      prev.includes(airline) 
-        ? prev.filter(a => a !== airline)
-        : [...prev, airline]
-    );
-  };
-
-  const toggleTimeSlot = (slot) => {
-    setSelectedTimeSlots(prev => 
-      prev.includes(slot) 
-        ? prev.filter(s => s !== slot)
-        : [...prev, slot]
-    );
-  };
 
   const flights = [
     {
@@ -126,6 +107,109 @@ const FlightsPage = () => {
       rating: 4.1
     },
   ];
+
+  const handleSearch = () => {
+    console.log('Searching with:', searchData);
+    // Untuk sekarang hanya log, data penerbangan masih statis
+  };
+
+  const handleResetFilters = () => {
+    setPriceRange([0, 10000000]);
+    setSelectedAirlines([]);
+    setSelectedTimeSlots([]);
+    setSortBy('price');
+  };
+
+  const getMinutesFromTime = (time) => {
+    if (!time) return 0;
+    const [hour, minute] = time.split(':').map(Number);
+    return hour * 60 + (minute || 0);
+  };
+
+  const isInSelectedTimeSlots = (time) => {
+    if (selectedTimeSlots.length === 0) return true;
+    const minutes = getMinutesFromTime(time);
+
+    return selectedTimeSlots.some((slot) => {
+      switch (slot) {
+        case 'morning': // 00:00 - 06:00
+          return minutes >= 0 && minutes < 6 * 60;
+        case 'afternoon': // 06:00 - 12:00
+          return minutes >= 6 * 60 && minutes < 12 * 60;
+        case 'evening': // 12:00 - 18:00
+          return minutes >= 12 * 60 && minutes < 18 * 60;
+        case 'night': // 18:00 - 24:00
+          return minutes >= 18 * 60 && minutes < 24 * 60;
+        default:
+          return true;
+      }
+    });
+  };
+
+  const filteredFlights = flights.filter((flight) => {
+    // Filter harga
+    if (flight.price < priceRange[0] || flight.price > priceRange[1]) return false;
+
+    // Filter maskapai
+    if (selectedAirlines.length > 0 && !selectedAirlines.includes(flight.airline)) return false;
+
+    // Filter waktu keberangkatan
+    if (!isInSelectedTimeSlots(flight.departure.time)) return false;
+
+    return true;
+  });
+
+  const sortedFlights = [...filteredFlights].sort((a, b) => {
+    if (sortBy === 'price') {
+      return a.price - b.price; // termurah dulu
+    }
+
+    if (sortBy === 'departure') {
+      return getMinutesFromTime(a.departure.time) - getMinutesFromTime(b.departure.time);
+    }
+
+    if (sortBy === 'arrival') {
+      return getMinutesFromTime(a.arrival.time) - getMinutesFromTime(b.arrival.time);
+    }
+
+    if (sortBy === 'duration') {
+      const getDurationMinutes = (durationStr) => {
+        // format contoh: "2h 30m"
+        const match = durationStr.match(/(\d+)h\s*(\d+)?m?/);
+        if (!match) return 0;
+        const hours = parseInt(match[1], 10) || 0;
+        const minutes = parseInt(match[2], 10) || 0;
+        return hours * 60 + minutes;
+      };
+
+      return getDurationMinutes(a.duration) - getDurationMinutes(b.duration);
+    }
+
+    return 0;
+  });
+
+  const displayedFlights = sortedFlights.slice(0, visibleCount);
+
+  useEffect(() => {
+    // Set ulang jumlah yang ditampilkan ketika filter/sort berubah
+    setVisibleCount(3);
+  }, [priceRange, selectedAirlines, selectedTimeSlots, sortBy]);
+
+  const toggleAirline = (airline) => {
+    setSelectedAirlines(prev => 
+      prev.includes(airline) 
+        ? prev.filter(a => a !== airline)
+        : [...prev, airline]
+    );
+  };
+
+  const toggleTimeSlot = (slot) => {
+    setSelectedTimeSlots(prev => 
+      prev.includes(slot) 
+        ? prev.filter(s => s !== slot)
+        : [...prev, slot]
+    );
+  };
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('id-ID', {
@@ -259,7 +343,12 @@ const FlightsPage = () => {
                     <Filter className="w-5 h-5 mr-2" />
                     Filter
                   </h2>
-                  <button className="text-primary-600 text-sm font-medium">Reset</button>
+                  <button 
+                    className="text-primary-600 text-sm font-medium"
+                    onClick={handleResetFilters}
+                  >
+                    Reset
+                  </button>
                 </div>
 
                 {/* Price Range */}
@@ -352,10 +441,11 @@ const FlightsPage = () => {
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900 mb-1">
-                    Jakarta → Bali
+                    {searchData.from.split('(')[0]}  {searchData.to.split('(')[0]}
                   </h1>
                   <p className="text-gray-600">
-                    {flights.length} penerbangan ditemukan • Rabu, 18 Nov 2025
+                    {sortedFlights.length} penerbangan ditemukan
+                    {searchData.date && `  ${searchData.date}`}
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
@@ -382,7 +472,7 @@ const FlightsPage = () => {
 
             {/* Flight Cards */}
             <div className="space-y-4">
-              {flights.map((flight) => (
+              {displayedFlights.map((flight) => (
                 <div key={flight.id} className="card hover:shadow-2xl transition-all">
                   <div className="p-6">
                     <div className="flex items-center justify-between gap-6">
@@ -438,7 +528,7 @@ const FlightsPage = () => {
                         </p>
                         <p className="text-xs text-gray-500 mb-3">per orang</p>
                         <button 
-                          onClick={() => navigate('/flight-detail')}
+                          onClick={() => navigate('/flight-detail', { state: { flight, searchData } })}
                           className="btn-primary text-sm py-2 px-6 flex items-center"
                         >
                           Pilih
@@ -460,7 +550,7 @@ const FlightsPage = () => {
                         <span>• Reschedule Available</span>
                       </div>
                       <button 
-                        onClick={() => navigate('/flight-detail')}
+                        onClick={() => navigate('/flight-detail', { state: { flight, searchData } })}
                         className="text-primary-600 font-medium hover:text-primary-700"
                       >
                         Lihat Detail
@@ -472,11 +562,16 @@ const FlightsPage = () => {
             </div>
 
             {/* Load More */}
-            <div className="mt-8 text-center">
-              <button className="btn-secondary">
-                Muat Lebih Banyak
-              </button>
-            </div>
+            {sortedFlights.length > visibleCount && (
+              <div className="mt-8 text-center">
+                <button 
+                  className="btn-secondary"
+                  onClick={() => setVisibleCount((prev) => Math.min(prev + 3, sortedFlights.length))}
+                >
+                  Muat Lebih Banyak
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

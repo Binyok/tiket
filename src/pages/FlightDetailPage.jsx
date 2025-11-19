@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Plane, 
   Clock, 
@@ -16,9 +16,13 @@ import {
 
 const FlightDetailPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedClass, setSelectedClass] = useState('economy');
 
-  const flight = {
+  const passedFlight = location.state?.flight;
+  const searchData = location.state?.searchData;
+
+  const defaultFlight = {
     id: 1,
     airline: 'Garuda Indonesia',
     logo: 'https://via.placeholder.com/120x60?text=GA',
@@ -43,6 +47,10 @@ const FlightDetailPage = () => {
     rating: 4.5,
     reviews: 2340
   };
+
+  const flight = passedFlight
+    ? { ...defaultFlight, ...passedFlight }
+    : defaultFlight;
 
   const classes = [
     {
@@ -72,6 +80,8 @@ const FlightDetailPage = () => {
     { icon: Luggage, label: 'Bagasi 20kg' }
   ];
 
+  const reviewsCount = typeof flight.reviews === 'number' ? flight.reviews : 0;
+
   const formatPrice = (price) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -80,8 +90,24 @@ const FlightDetailPage = () => {
     }).format(price);
   };
 
+  const passengerCount = searchData?.passengers || 1;
+  const travelDate = searchData?.date || flight.departure.date;
+
   const handleBooking = () => {
-    navigate('/checkout');
+    const selectedClassObj = classes.find(c => c.id === selectedClass);
+    const basePrice = selectedClassObj?.price || 0;
+    const tax = 150000;
+    const totalPrice = basePrice + tax;
+
+    navigate('/checkout/flight', {
+      state: {
+        flight,
+        selectedClass: selectedClassObj,
+        passengers: passengerCount,
+        date: travelDate,
+        totalPrice,
+      },
+    });
   };
 
   return (
@@ -110,7 +136,9 @@ const FlightDetailPage = () => {
                       <p className="text-gray-600">{flight.flightNumber}</p>
                       <div className="flex items-center mt-2">
                         <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                        <span className="text-sm text-gray-600 ml-1">{flight.rating} ({flight.reviews.toLocaleString()} ulasan)</span>
+                        <span className="text-sm text-gray-600 ml-1">
+                          {flight.rating} ({reviewsCount.toLocaleString('id-ID')} ulasan)
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -256,11 +284,11 @@ const FlightDetailPage = () => {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Tanggal</span>
-                    <span className="font-medium text-gray-900">18 Nov 2025</span>
+                    <span className="font-medium text-gray-900">{travelDate}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Penumpang</span>
-                    <span className="font-medium text-gray-900">1 Dewasa</span>
+                    <span className="font-medium text-gray-900">{passengerCount} Dewasa</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Kelas</span>

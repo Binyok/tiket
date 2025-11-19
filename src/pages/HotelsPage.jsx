@@ -15,9 +15,19 @@ import {
   Filter
 } from 'lucide-react';
 
-const HotelsPage = () => {
+  const HotelsPage = () => {
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState('grid');
+  const [sortBy, setSortBy] = useState('price-asc');
+  const [visibleCount, setVisibleCount] = useState(4);
+  const [searchLocation, setSearchLocation] = useState('Jakarta');
+  const [showLocationDropdown, setShowLocationDropdown] = useState(false);
+
+  const cities = [
+    { name: 'Jakarta' },
+    { name: 'Bali' },
+    { name: 'Bandung' },
+  ];
 
   const hotels = [
     {
@@ -117,6 +127,28 @@ const HotelsPage = () => {
     }).format(price);
   };
 
+  const filteredHotels = hotels.filter((hotel) => {
+    if (!searchLocation) return true;
+    const city = hotel.location.split(',').at(-1)?.trim().toLowerCase();
+    return city.includes(searchLocation.toLowerCase());
+  });
+
+  const sortedHotels = [...filteredHotels].sort((a, b) => {
+    switch (sortBy) {
+      case 'price-asc':
+        return a.price - b.price;
+      case 'rating-desc':
+        return b.rating - a.rating;
+      case 'popular':
+        return b.reviews - a.reviews;
+      case 'default':
+      default:
+        return 0; // urutan asli
+    }
+  });
+
+  const displayedHotels = sortedHotels.slice(0, visibleCount);
+
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Search Bar */}
@@ -132,9 +164,29 @@ const HotelsPage = () => {
                   <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
                     type="text"
+                    value={searchLocation}
+                    onFocus={() => setShowLocationDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowLocationDropdown(false), 200)}
+                    onChange={(e) => setSearchLocation(e.target.value)}
                     placeholder="Mau ke mana?"
                     className="input-field pl-10"
                   />
+                  {showLocationDropdown && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                      {cities.map((city) => (
+                        <div
+                          key={city.name}
+                          onClick={() => {
+                            setSearchLocation(city.name);
+                            setShowLocationDropdown(false);
+                          }}
+                          className="px-4 py-3 hover:bg-primary-50 cursor-pointer transition-colors"
+                        >
+                          <p className="font-medium text-gray-900">{city.name}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -194,15 +246,19 @@ const HotelsPage = () => {
                 Hotel di Jakarta
               </h1>
               <p className="text-gray-600">
-                {hotels.length} hotel ditemukan
+                {sortedHotels.length} hotel ditemukan
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <select className="px-4 py-2 border border-gray-300 rounded-lg">
-                <option>Harga Termurah</option>
-                <option>Rating Tertinggi</option>
-                <option>Populer</option>
-                <option>Terdekat</option>
+              <select 
+                className="px-4 py-2 border border-gray-300 rounded-lg"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="price-asc">Harga Termurah</option>
+                <option value="rating-desc">Rating Tertinggi</option>
+                <option value="popular">Populer</option>
+                <option value="default">Terdekat</option>
               </select>
             </div>
           </div>
@@ -210,7 +266,7 @@ const HotelsPage = () => {
 
         {/* Hotel Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {hotels.map((hotel) => (
+          {displayedHotels.map((hotel) => (
             <div key={hotel.id} className="card group cursor-pointer">
               {/* Image */}
               <div className="relative h-56 overflow-hidden">
@@ -291,7 +347,7 @@ const HotelsPage = () => {
                       <p className="text-xs text-gray-500">per malam</p>
                     </div>
                     <button 
-                      onClick={() => navigate('/hotel-detail')}
+                      onClick={() => navigate('/hotel-detail', { state: { hotel } })}
                       className="btn-primary text-sm py-2 px-4 flex items-center"
                     >
                       Pilih
@@ -305,11 +361,16 @@ const HotelsPage = () => {
         </div>
 
         {/* Load More */}
-        <div className="mt-8 text-center">
-          <button className="btn-secondary">
-            Muat Lebih Banyak Hotel
-          </button>
-        </div>
+        {sortedHotels.length > visibleCount && (
+          <div className="mt-8 text-center">
+            <button 
+              className="btn-secondary"
+              onClick={() => setVisibleCount((prev) => Math.min(prev + 3, sortedHotels.length))}
+            >
+              Muat Lebih Banyak Hotel
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Why Book With Us */}

@@ -10,6 +10,8 @@ const TrainsPage = () => {
     date: '',
     passengers: 1
   });
+  const [showFromDropdown, setShowFromDropdown] = useState(false);
+  const [showToDropdown, setShowToDropdown] = useState(false);
 
   const cities = [
     { name: 'Jakarta', code: 'GMR' },
@@ -63,6 +65,26 @@ const TrainsPage = () => {
     }).format(price);
   };
 
+  const filteredTrains = trains.filter((train) => {
+    const fromCodeMatch = searchData.from.match(/\(([^)]+)\)/);
+    const toCodeMatch = searchData.to.match(/\(([^)]+)\)/);
+    const fromCode = fromCodeMatch?.[1];
+    const toCode = toCodeMatch?.[1];
+
+    // Untuk demo sederhana, hanya filter berdasarkan kota asal & tujuan di teks route
+    const routeFrom = 'Jakarta';
+    const routeTo = 'Yogyakarta';
+
+    if (fromCode && !routeFrom.toLowerCase().includes(fromCode.toLowerCase()) && !searchData.from.toLowerCase().includes(routeFrom.toLowerCase())) {
+      return false;
+    }
+    if (toCode && !routeTo.toLowerCase().includes(toCode.toLowerCase()) && !searchData.to.toLowerCase().includes(routeTo.toLowerCase())) {
+      return false;
+    }
+
+    return true;
+  });
+
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="bg-primary-600 text-white py-8">
@@ -76,9 +98,28 @@ const TrainsPage = () => {
                   <input
                     type="text"
                     value={searchData.from}
+                    onFocus={() => setShowFromDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowFromDropdown(false), 200)}
                     onChange={(e) => setSearchData({...searchData, from: e.target.value})}
                     className="input-field pl-10"
                   />
+                  {showFromDropdown && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                      {cities.map((city) => (
+                        <div
+                          key={city.code}
+                          onClick={() => {
+                            setSearchData({...searchData, from: `${city.name} (${city.code})`});
+                            setShowFromDropdown(false);
+                          }}
+                          className="px-4 py-3 hover:bg-primary-50 cursor-pointer transition-colors"
+                        >
+                          <p className="font-medium text-gray-900">{city.name}</p>
+                          <p className="text-sm text-gray-500">{city.code}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -89,9 +130,28 @@ const TrainsPage = () => {
                   <input
                     type="text"
                     value={searchData.to}
+                    onFocus={() => setShowToDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowToDropdown(false), 200)}
                     onChange={(e) => setSearchData({...searchData, to: e.target.value})}
                     className="input-field pl-10"
                   />
+                  {showToDropdown && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                      {cities.map((city) => (
+                        <div
+                          key={city.code}
+                          onClick={() => {
+                            setSearchData({...searchData, to: `${city.name} (${city.code})`});
+                            setShowToDropdown(false);
+                          }}
+                          className="px-4 py-3 hover:bg-primary-50 cursor-pointer transition-colors"
+                        >
+                          <p className="font-medium text-gray-900">{city.name}</p>
+                          <p className="text-sm text-gray-500">{city.code}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -135,11 +195,11 @@ const TrainsPage = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="bg-white rounded-xl shadow-md p-6 mb-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-1">Kereta Api {searchData.from.split('(')[0]} → {searchData.to.split('(')[0]}</h1>
-          <p className="text-gray-600">{trains.length} kereta tersedia</p>
+          <p className="text-gray-600">{filteredTrains.length} kereta tersedia</p>
         </div>
 
         <div className="space-y-4">
-          {trains.map((train) => (
+          {filteredTrains.map((train) => (
             <div key={train.id} className="card">
               <div className="p-6">
                 <div className="flex items-center justify-between gap-6">
@@ -177,7 +237,7 @@ const TrainsPage = () => {
                     <p className="text-sm text-green-600 mb-3">{train.available} kursi tersedia</p>
                     <p className="text-2xl font-bold text-primary-600 mb-3">{formatPrice(train.price)}</p>
                     <button 
-                      onClick={() => navigate('/checkout')}
+                      onClick={() => navigate('/checkout/train', { state: { train, passengers: searchData.passengers, date: searchData.date } })}
                       className="btn-primary text-sm py-2 px-6"
                     >
                       Pilih

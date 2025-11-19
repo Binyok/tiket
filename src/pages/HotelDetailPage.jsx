@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   MapPin, 
   Star,
@@ -19,9 +19,12 @@ import {
 
 const HotelDetailPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedRoom, setSelectedRoom] = useState(null);
 
-  const hotel = {
+  const passedHotel = location.state?.hotel;
+
+  const defaultHotel = {
     name: 'Grand Hyatt Jakarta',
     location: 'Thamrin, Jakarta Pusat',
     address: 'Jl. MH. Thamrin No.28-30, Jakarta Pusat 10350',
@@ -34,6 +37,10 @@ const HotelDetailPage = () => {
       'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&h=500&fit=crop',
     ]
   };
+
+  const hotel = passedHotel
+    ? { ...defaultHotel, ...passedHotel, images: defaultHotel.images }
+    : defaultHotel;
 
   const facilities = [
     { icon: Wifi, label: 'WiFi Gratis' },
@@ -89,9 +96,22 @@ const HotelDetailPage = () => {
   };
 
   const handleBooking = () => {
-    if (selectedRoom) {
-      navigate('/checkout');
-    }
+    if (!selectedRoom) return;
+
+    const room = rooms.find(r => r.id === selectedRoom);
+    const nights = 2;
+    const guests = room ? parseInt(room.capacity) || 2 : 2;
+
+    navigate('/checkout/hotel', {
+      state: {
+        hotel,
+        room,
+        nights,
+        guests,
+        checkIn: '18 Nov 2025',
+        checkOut: '20 Nov 2025',
+      },
+    });
   };
 
   return (
