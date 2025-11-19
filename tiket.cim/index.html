@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tiket.cim - Travel Booking</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- HEADER -->
+    <header class="header">
+      <div class="top-banner">
+        <div class="container top-banner-inner">
+          <div class="top-banner-left">
+            <span>Transaksi Aman &amp; Terpercaya</span>
+          </div>
+          <div class="top-banner-right">
+            <a href="#help">Pusat Bantuan</a>
+            <span>|</span>
+            <a href="#partner">Jadi Partner</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="container main-header">
+        <a href="#home" class="logo">
+          <div class="logo-icon">✈</div>
+          <span class="logo-text">tiket.cim</span>
+        </a>
+
+        <nav class="nav-desktop">
+          <a href="#flights">Pesawat</a>
+          <a href="#hotels">Hotel</a>
+          <a href="#trains">Kereta</a>
+          <a href="#bus">Bus &amp; Travel</a>
+          <a href="#car">Sewa Mobil</a>
+          <a href="#events">Event</a>
+        </nav>
+
+        <div class="header-actions">
+          <a href="#rewards" class="link-rewards">Rewards</a>
+          <div class="user-menu">
+            <button id="userMenuButton" class="user-button">Masuk ▾</button>
+            <div id="userMenu" class="user-dropdown hidden">
+              <a href="#login">Masuk</a>
+              <a href="#register">Daftar</a>
+              <hr />
+              <a href="#orders">Pesanan Saya</a>
+              <a href="#profile">Profil</a>
+            </div>
+          </div>
+          <a href="#register" class="btn-primary">Daftar Sekarang</a>
+        </div>
+
+        <button id="mobileMenuButton" class="mobile-menu-button">☰</button>
+      </div>
+
+      <div id="mobileMenu" class="mobile-menu hidden">
+        <nav>
+          <a href="#flights">Pesawat</a>
+          <a href="#hotels">Hotel</a>
+          <a href="#trains">Kereta</a>
+          <a href="#bus">Bus &amp; Travel</a>
+          <a href="#car">Sewa Mobil</a>
+          <a href="#events">Event</a>
+          <hr />
+          <a href="#rewards">Rewards</a>
+          <a href="#login">Masuk</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- HERO + SEARCH -->
+    <section class="hero" id="home">
+      <div class="hero-bg-pattern"></div>
+      <div class="container hero-inner">
+        <div class="hero-text">
+          <h1>Wujudkan Liburan Impian Anda</h1>
+          <p>Pesan tiket pesawat, hotel, kereta, dan lainnya dengan mudah dan harga terbaik</p>
+        </div>
+
+        <div class="search-card">
+          <div class="search-tabs" id="searchTabs">
+            <button data-tab="flight" class="tab-button active">✈ Pesawat</button>
+            <button data-tab="hotel" class="tab-button">🏨 Hotel</button>
+            <button data-tab="train" class="tab-button">🚆 Kereta</button>
+            <button data-tab="bus" class="tab-button">🚌 Bus &amp; Travel</button>
+            <button data-tab="car" class="tab-button">🚗 Sewa Mobil</button>
+          </div>
+
+          <!-- Flight Form -->
+          <div class="tab-panel" id="tab-flight">
+            <div class="trip-type">
+              <label><input type="radio" name="tripType" value="roundtrip" checked /> Pulang-Pergi</label>
+              <label><input type="radio" name="tripType" value="oneway" /> Sekali Jalan</label>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-field">
+                <label>Dari</label>
+                <input type="text" placeholder="Jakarta (CGK)" />
+              </div>
+              <div class="form-field">
+                <label>Ke</label>
+                <input type="text" placeholder="Bali (DPS)" />
+              </div>
+              <div class="form-field">
+                <label>Tanggal Pergi</label>
+                <input type="date" />
+              </div>
+              <div class="form-field" id="flightExtraField">
+                <label>Tanggal Pulang</label>
+                <input type="date" />
+              </div>
+            </div>
+
+            <div class="form-grid" id="flightPassengerRow">
+              <div class="form-field">
+                <label>Penumpang</label>
+                <select>
+                  <option>1 Penumpang, Ekonomi</option>
+                  <option>2 Penumpang, Ekonomi</option>
+                  <option>3 Penumpang, Ekonomi</option>
+                  <option>1 Penumpang, Bisnis</option>
+                </select>
+              </div>
+            </div>
+
+            <button class="btn-primary full-width" id="flightSearchButton">Cari Penerbangan →</button>
+          </div>
+
+          <!-- Hotel Form -->
+          <div class="tab-panel hidden" id="tab-hotel">
+            <div class="form-grid">
+              <div class="form-field">
+                <label>Kota atau Nama Hotel</label>
+                <input type="text" placeholder="Mau ke mana?" />
+              </div>
+              <div class="form-field">
+                <label>Check-in</label>
+                <input type="date" />
+              </div>
+              <div class="form-field">
+                <label>Check-out</label>
+                <input type="date" />
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="form-field">
+                <label>Tamu &amp; Kamar</label>
+                <select>
+                  <option>1 Kamar, 2 Tamu</option>
+                  <option>2 Kamar, 4 Tamu</option>
+                  <option>3 Kamar, 6 Tamu</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn-primary full-width" id="hotelSearchButton">Cari Hotel →</button>
+          </div>
+
+          <!-- Train Form -->
+          <div class="tab-panel hidden" id="tab-train">
+            <div class="form-grid four-cols">
+              <div class="form-field">
+                <label>Stasiun Asal</label>
+                <input type="text" placeholder="Jakarta (GMR)" />
+              </div>
+              <div class="form-field">
+                <label>Stasiun Tujuan</label>
+                <input type="text" placeholder="Yogyakarta (YK)" />
+              </div>
+              <div class="form-field">
+                <label>Tanggal Keberangkatan</label>
+                <input type="date" />
+              </div>
+              <div class="form-field">
+                <label>Penumpang</label>
+                <select>
+                  <option>1 Dewasa</option>
+                  <option>2 Dewasa</option>
+                  <option>3 Dewasa</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn-primary full-width" id="trainSearchButton">Cari Tiket Kereta →</button>
+          </div>
+
+          <!-- Placeholder forms for Bus & Car -->
+          <div class="tab-panel hidden" id="tab-bus">
+            <p class="placeholder-text">Form pencarian Bus &amp; Travel akan datang segera.</p>
+          </div>
+          <div class="tab-panel hidden" id="tab-car">
+            <p class="placeholder-text">Form pencarian Sewa Mobil akan datang segera.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROMO SECTION -->
+    <section class="section" id="promos">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <h2>Promo Spesial Hari Ini</h2>
+            <p>Jangan lewatkan penawaran terbaik untuk perjalanan Anda</p>
+          </div>
+          <a href="#promos" class="section-link">Lihat Semua →</a>
+        </div>
+
+        <div class="card-grid three-cols" id="promoList">
+          <!-- Diisi via JS agar mudah di-maintain -->
+        </div>
+      </div>
+    </section>
+
+    <!-- POPULAR DESTINATIONS -->
+    <section class="section section-alt" id="destinations">
+      <div class="container">
+        <div class="section-title-center">
+          <h2>Destinasi Populer</h2>
+          <p>Temukan hotel terbaik di kota-kota favorit</p>
+        </div>
+        <div class="card-grid four-cols" id="destinationList">
+          <!-- Diisi via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section" id="features">
+      <div class="container">
+        <div class="section-title-center">
+          <h2>Kenapa Pilih tiket.cim?</h2>
+          <p>Kemudahan dan keuntungan yang kami tawarkan untuk Anda</p>
+        </div>
+        <div class="features-grid" id="featureList">
+          <!-- Diisi via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA DOWNLOAD -->
+    <section class="cta">
+      <div class="container cta-inner">
+        <h2>Download Aplikasi tiket.cim</h2>
+        <p>Dapatkan diskon eksklusif dan kemudahan booking di genggaman Anda</p>
+        <div class="cta-buttons">
+          <button class="cta-btn"> App Store</button>
+          <button class="cta-btn">▶ Google Play</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="container footer-main">
+        <div class="footer-col brand">
+          <div class="logo">
+            <div class="logo-icon">✈</div>
+            <span class="logo-text">tiket.cim</span>
+          </div>
+          <p>
+            Satu aplikasi untuk semua kebutuhan perjalanan Anda. Pesan tiket pesawat, hotel, kereta, dan lainnya dengan mudah.
+          </p>
+          <div class="social-links">
+            <a href="#">f</a>
+            <a href="#">t</a>
+            <a href="#">ig</a>
+            <a href="#">yt</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3>Produk</h3>
+          <a href="#flights">Pesawat</a>
+          <a href="#hotels">Hotel</a>
+          <a href="#trains">Kereta Api</a>
+          <a href="#bus">Bus &amp; Travel</a>
+          <a href="#car">Sewa Mobil</a>
+          <a href="#events">Event</a>
+        </div>
+        <div class="footer-col">
+          <h3>Perusahaan</h3>
+          <a href="#about">Tentang Kami</a>
+          <a href="#careers">Karir</a>
+          <a href="#press">Press</a>
+          <a href="#blog">Blog</a>
+        </div>
+        <div class="footer-col">
+          <h3>Dukungan</h3>
+          <a href="#help">Pusat Bantuan</a>
+          <a href="#contact">Hubungi Kami</a>
+          <a href="#privacy">Kebijakan Privasi</a>
+          <a href="#terms">Syarat &amp; Ketentuan</a>
+        </div>
+        <div class="footer-col">
+          <h3>Partner</h3>
+          <a href="#partner">Jadi Partner</a>
+          <a href="#partner-hotel">Daftarkan Hotel</a>
+          <a href="#partner-event">Daftarkan Event</a>
+          <div class="footer-contact">
+            <a href="mailto:info@tiket.cim">info@tiket.cim</a>
+            <a href="tel:+622150001234">+62 21 5000 1234</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-payments">
+        <div class="container payments-inner">
+          <div>
+            <p>Metode Pembayaran:</p>
+            <div class="payment-list" id="paymentList"></div>
+          </div>
+          <div class="partner-official">
+            <p>Partner Resmi:</p>
+            <div class="partner-chip">Kementrian Pariwisata RI</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="container footer-bottom-inner">
+          <p>© 2025 tiket.cim. All Rights Reserved.</p>
+          <p>Made with ❤️ in Indonesia</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

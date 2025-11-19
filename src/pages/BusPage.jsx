@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MapPin, Calendar, Users, Bus, Clock, ArrowRight } from 'lucide-react';
 
 const BusPage = () => {
+  const navigate = useNavigate();
   const [searchData, setSearchData] = useState({
     from: 'Jakarta',
     to: 'Bandung',
@@ -221,7 +223,18 @@ const BusPage = () => {
                 <div className="text-right">
                   <p className="text-2xl font-bold text-primary-600">{formatPrice(route.price)}</p>
                   <p className="text-xs text-gray-500 mb-3">per orang</p>
-                  <button className="btn-primary text-sm py-2 px-4 flex items-center justify-center">
+                  <button
+                    className="btn-primary text-sm py-2 px-4 flex items-center justify-center"
+                    onClick={() =>
+                      navigate('/checkout/bus', {
+                        state: {
+                          route,
+                          passengers: searchData.passengers,
+                          date: searchData.date,
+                        },
+                      })
+                    }
+                  >
                     Pilih
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </button>

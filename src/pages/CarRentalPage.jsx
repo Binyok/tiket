@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MapPin, Calendar, Users, Car, Fuel, Gauge } from 'lucide-react';
 
 const CarRentalPage = () => {
+  const navigate = useNavigate();
   const [searchData, setSearchData] = useState({
     location: 'Jakarta',
     startDate: '',
@@ -176,7 +178,19 @@ const CarRentalPage = () => {
                     <p className="text-2xl font-bold text-primary-600">{formatPrice(car.pricePerDay)}</p>
                     <p className="text-xs text-gray-500">per hari</p>
                   </div>
-                  <button className="btn-primary text-sm py-2 px-4">Pilih Mobil</button>
+                  <button
+                    className="btn-primary text-sm py-2 px-4"
+                    onClick={() =>
+                      navigate('/checkout/car', {
+                        state: {
+                          car,
+                          searchData,
+                        },
+                      })
+                    }
+                  >
+                    Pilih Mobil
+                  </button>
                 </div>
               </div>
             </div>

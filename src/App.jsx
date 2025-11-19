@@ -11,6 +11,8 @@ import CheckoutPage from './pages/CheckoutPage';
 import FlightCheckoutPage from './pages/FlightCheckoutPage';
 import HotelCheckoutPage from './pages/HotelCheckoutPage';
 import TrainCheckoutPage from './pages/TrainCheckoutPage';
+import BusCheckoutPage from './pages/BusCheckoutPage';
+import CarCheckoutPage from './pages/CarCheckoutPage';
 import BusPage from './pages/BusPage';
 import CarRentalPage from './pages/CarRentalPage';
 import EventsPage from './pages/EventsPage';
@@ -34,6 +36,8 @@ function App() {
             <Route path="/checkout/flight" element={<FlightCheckoutPage />} />
             <Route path="/checkout/hotel" element={<HotelCheckoutPage />} />
             <Route path="/checkout/train" element={<TrainCheckoutPage />} />
+            <Route path="/checkout/bus" element={<BusCheckoutPage />} />
+            <Route path="/checkout/car" element={<CarCheckoutPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/bus" element={<BusPage />} />
             <Route path="/car-rental" element={<CarRentalPage />} />
